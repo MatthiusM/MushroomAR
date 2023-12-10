@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CupGame : MonoBehaviour
 {
@@ -9,24 +10,26 @@ public class CupGame : MonoBehaviour
     private GameObject mushroom; 
 
     private GameObject selectedCup; 
-    private Vector3 yChange = new Vector3(0, 0.5f, 0); 
+    private Vector3 yChange = new(0, 0.5f, 0); 
     private Vector3 originalMushroomPos; 
-    private readonly float moveDuration = 1f; 
+    private readonly float moveDuration = 1f;
+
+    public UnityEvent finishedSetup;
 
     void Start()
     {
-
         originalMushroomPos = mushroom.transform.position;
         StartCoroutine(StartGame());
     }
 
     IEnumerator StartGame()
     {
-
         yield return StartCoroutine(LiftCups());
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(MoveMushroomCup());
         yield return StartCoroutine(LowerCups());
+        finishedSetup?.Invoke();
+
     }
 
     IEnumerator LiftCups()
