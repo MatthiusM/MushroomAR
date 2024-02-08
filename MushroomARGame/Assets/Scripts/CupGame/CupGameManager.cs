@@ -1,25 +1,15 @@
+using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class CupGameManager : MonoBehaviour
 {
-    private CupGame game;
-
-    private SwapCups swap;
+    public Action onGameStart;
+    public Action onPlayRound;
+    public Action onGameEnd;
 
     private void Start()
-    {
-        game = GetComponent<CupGame>();
-        swap = GetComponent<SwapCups>();
-
-        game.finishedSetup.AddListener(EnableSwap);
+    {        
+        onGameStart?.Invoke();
     }
-
-    public void EnableSwap()
-    {
-        game.enabled = false; 
-        swap.enabled = true;
-    }
-
 }
