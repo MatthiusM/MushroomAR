@@ -1,85 +1,107 @@
+using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class CupGame : MonoBehaviour
 {
     [SerializeField]
-    private GameObject[] cups; 
+    private GameObject[] cups = new GameObject[3];
+
     [SerializeField]
-    private GameObject mushroom; 
+    private GameObject mushroom;
 
-    private GameObject selectedCup; 
-    private Vector3 yChange = new(0, 0.5f, 0); 
-    private Vector3 originalMushroomPos; 
-    private readonly float moveDuration = 1f;
+    private readonly float liftHeight = 0.6f;
+    private readonly float liftDuration = 1.0f;
+    private readonly float moveMushroomDuration = 2.0f;
+    private GameObject targetCup;
 
-    public UnityEvent finishedSetup;
+    private CupGameManager cupGameManager;
 
-    void Start()
+    public Action StartFinished;
+
+    private void Start()
     {
-        originalMushroomPos = mushroom.transform.position;
-        StartCoroutine(StartGame());
+        cupGameManager = GetComponent<CupGameManager>();
+        cupGameManager.onGameStart += StartGame;
     }
 
-    IEnumerator StartGame()
+    private void StartGame()
     {
-        yield return StartCoroutine(LiftCups());
-        yield return new WaitForSeconds(0.5f);
-        yield return StartCoroutine(MoveMushroomCup());
-        yield return StartCoroutine(LowerCups());
-        finishedSetup?.Invoke();
-
+        StartCoroutine(GameSequence());
     }
 
-    IEnumerator LiftCups()
+    private IEnumerator GameSequence()
     {
-        foreach (var cup in cups)
+        yield return LiftCupsToHeight();
+        yield return MoveMushroomToCup();
+        yield return LowerCups();
+        yield return ParentMushroomToCup(true);
+    }
+
+    private IEnumerator LiftCupsToHeight()
+    {
+        yield return MoveCups(Vector3.up * liftHeight);
+    }
+
+    private IEnumerator LowerCups()
+    {
+        yield return MoveCups(Vector3.down * liftHeight);
+    }
+
+    private IEnumerator MoveCups(Vector3 moveDirection)
+    {
+        Vector3[] originalPositions = new Vector3[cups.Length];
+        Vector3[] targetPositions = new Vector3[cups.Length];
+
+        // Record original and target positions
+        for (int i = 0; i < cups.Length; i++)
         {
-            StartCoroutine(MoveGameObject(cup, cup.transform.position + yChange, moveDuration));
+            if (cups[i] != null)
+            {
+                originalPositions[i] = cups[i].transform.position;
+                targetPositions[i] = originalPositions[i] + moveDirection * liftHeight;
+            }
         }
 
-        // Wait 1 second
-        yield return new WaitForSeconds(1f);
-    }
-
-    IEnumerator MoveMushroomCup()
-    {
-        selectedCup = cups[Random.Range(0, cups.Length)];
-        Vector3 targetPosition = new(selectedCup.transform.position.x, mushroom.transform.position.y, selectedCup.transform.position.z);
-        yield return StartCoroutine(MoveGameObject(mushroom, targetPosition, moveDuration));
-    }
-
-    IEnumerator LowerCups()
-    {
-        foreach (var cup in cups)
+        // Smoothly move cups to target positions
+        float elapsedTime = 0;
+        while (elapsedTime < liftDuration)
         {
-            // Move each cup downwards to its original position.
-            StartCoroutine(MoveGameObject(cup, new Vector3(cup.transform.position.x, originalMushroomPos.y, cup.transform.position.z), moveDuration));
-        }
-
-        // Wait 1 second
-        yield return new WaitForSeconds(1f);
-
-        // Parent the mushroom to the selected cup.
-        mushroom.transform.SetParent(selectedCup.transform);
-    }
-
-    // General coroutine for moving a GameObject to a target position over a specified duration.
-    IEnumerator MoveGameObject(GameObject cup, Vector3 targetPosition, float duration)
-    {
-        Vector3 startPosition = cup.transform.position;
-        float time = 0;
-
-        while (time < duration)
-        {
-            // Smoothly interpolate the cup's position from its start position to the target position over the given duration.
-            cup.transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
-            time += Time.deltaTime;
+            elapsedTime += Time.deltaTime;
+            float t = Mathf.SmoothStep(0, 1, elapsedTime / liftDuration);
+            for (int i = 0; i < cups.Length; i++)
+            {
+                if (cups[i] != null)
+                {
+                    cups[i].transform.position = Vector3.Lerp(originalPositions[i], targetPositions[i], t);
+                }
+            }
             yield return null;
         }
+    }
 
-        // Ensure the cup's position is exactly the target position after the movement is complete.
-        cup.transform.position = targetPosition;
+    private IEnumerator MoveMushroomToCup()
+    {
+        // Choose a random cup
+        targetCup = cups[UnityEngine.Random.Range(0, cups.Length)];
+
+        Vector3 targetPosition = targetCup.transform.position;
+        targetPosition.y = mushroom.transform.position.y;
+
+        // Smoothly move the mushroom to the target position
+        Vector3 startPosition = mushroom.transform.position;
+        float elapsedTime = 0;
+        while (elapsedTime < moveMushroomDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / moveMushroomDuration;
+            mushroom.transform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            yield return null;
+        }
+    }
+    private IEnumerator ParentMushroomToCup(bool shouldParent)
+    {
+        mushroom.transform.SetParent(shouldParent ? targetCup.transform : null);
+        yield return null;
     }
 }
