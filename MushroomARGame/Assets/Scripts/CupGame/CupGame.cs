@@ -27,25 +27,17 @@ public class CupGame : MonoBehaviour
 
     private void StartGame()
     {
-        StartCoroutine(GameSequence());
+        StartCoroutine(StartGameSequence());
     }
 
-    private IEnumerator GameSequence()
+    private IEnumerator StartGameSequence()
     {
-        yield return LiftCupsToHeight();
-        yield return MoveMushroomToCup();
-        yield return LowerCups();
-        yield return ParentMushroomToCup(true);
-    }
-
-    private IEnumerator LiftCupsToHeight()
-    {
+        // Lift cups
         yield return MoveCups(Vector3.up * liftHeight);
-    }
-
-    private IEnumerator LowerCups()
-    {
+        yield return MoveMushroomToCup();
+        // Lower cups
         yield return MoveCups(Vector3.down * liftHeight);
+        yield return ParentMushroomToCup(true);
     }
 
     private IEnumerator MoveCups(Vector3 moveDirection)
