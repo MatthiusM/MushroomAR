@@ -17,17 +17,33 @@ public class CupGame : MonoBehaviour
 
     private CupGameManager cupGameManager;
 
-    public Action StartFinished;
+    public Action onStartFinished;
 
-    private void Start()
+    private void Awake()
     {
-        cupGameManager = GetComponent<CupGameManager>();
+        DebugUtility.TryGetComponentWithErrorLog<CupGameManager>(gameObject, out cupGameManager);
+    }
+
+    private void OnEnable()
+    {
         cupGameManager.onGameStart += StartGame;
+        cupGameManager.onPlayRound += PlayRound;
+    }
+
+    private void OnDisable()
+    {
+        cupGameManager.onGameStart -= StartGame;
+        cupGameManager.onPlayRound -= PlayRound;
     }
 
     private void StartGame()
     {
         StartCoroutine(StartGameSequence());
+    }
+
+    private void PlayRound(int swaps, float totalDuration)
+    {
+        StartCoroutine(SwapCupsInCircle(swaps, totalDuration));
     }
 
     private IEnumerator StartGameSequence()
@@ -38,6 +54,8 @@ public class CupGame : MonoBehaviour
         // Lower cups
         yield return MoveCups(Vector3.down * liftHeight);
         yield return ParentMushroomToCup(true);
+
+        onStartFinished?.Invoke();
     }
 
     private IEnumerator MoveCups(Vector3 moveDirection)
@@ -95,5 +113,59 @@ public class CupGame : MonoBehaviour
     {
         mushroom.transform.SetParent(shouldParent ? targetCup.transform : null);
         yield return null;
+    }    
+
+    private IEnumerator SwapCupsInCircle(int swaps, float swapDuration)
+    {
+        int lastFirstCupIndex = -1; 
+        int lastSecondCupIndex = -1;
+
+        for (int i = 0; i < swaps; i++)
+        {
+            // Randomly select two different cups to swap, avoiding the last swapped pair
+            int firstCupIndex, secondCupIndex;
+            do
+            {
+                firstCupIndex = UnityEngine.Random.Range(0, cups.Length);
+                secondCupIndex = UnityEngine.Random.Range(0, cups.Length);
+            } while (firstCupIndex == secondCupIndex ||
+                     (firstCupIndex == lastFirstCupIndex && secondCupIndex == lastSecondCupIndex) ||
+                     (firstCupIndex == lastSecondCupIndex && secondCupIndex == lastFirstCupIndex));
+
+            GameObject firstCup = cups[firstCupIndex];
+            GameObject secondCup = cups[secondCupIndex];
+
+            lastFirstCupIndex = firstCupIndex;
+            lastSecondCupIndex = secondCupIndex;
+
+            Vector3 midpoint = (firstCup.transform.position + secondCup.transform.position) / 2 + Vector3.up * 0.5f;
+
+            float elapsedTime = 0;
+            Vector3 startFirstCupPos = firstCup.transform.position;
+            Vector3 startSecondCupPos = secondCup.transform.position;
+
+            while (elapsedTime < swapDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / swapDuration;
+
+                // Calculate the angular position for each cup
+                float angle = Mathf.Lerp(0, Mathf.PI, t);
+
+                // Calculate new positions for each cup around the midpoint
+                Vector3 firstCupNewPos = midpoint + Quaternion.Euler(0, -Mathf.Rad2Deg * angle, 0) * (startFirstCupPos - midpoint);
+                Vector3 secondCupNewPos = midpoint + Quaternion.Euler(0, -Mathf.Rad2Deg * angle, 0) * (startSecondCupPos - midpoint);
+
+                // Apply new positions
+                firstCup.transform.position = firstCupNewPos;
+                secondCup.transform.position = secondCupNewPos;
+
+                yield return null;
+            }
+
+            firstCup.transform.position = startSecondCupPos;
+            secondCup.transform.position = startFirstCupPos;
+        }
     }
+
 }
