@@ -21,7 +21,7 @@ public class CupGame : MonoBehaviour
 
     private void Awake()
     {
-        DebugUtility.TryGetComponentWithErrorLog<CupGameManager>(gameObject, out cupGameManager);
+        cupGameManager = DebugUtility.GetComponentFromGameObject<CupGameManager>(gameObject);
     }
 
     private void OnEnable()
