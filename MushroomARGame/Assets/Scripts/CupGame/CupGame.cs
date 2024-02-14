@@ -24,27 +24,25 @@ public class CupGame : MonoBehaviour
 
     private void OnEnable()
     {
-        cupGameManager.onStart += StartGame;
-        cupGameManager.onPlayRound += PlayRound;
+        cupGameManager.OnStart += StartGame;
+        cupGameManager.OnPlayRound += PlayRound;
     }
 
     private void OnDisable()
     {
-        cupGameManager.onStart -= StartGame;
+        cupGameManager.OnStart -= StartGame;
     }
 
     private void StartGame(Action onComplete)
     {
-        StartCoroutine(StartGameSequence(onComplete));
+        StartCoroutine(StartSequence(onComplete));
     }
     private void PlayRound(Action onComplete)
     {
-        StartCoroutine(SwapCupsInCircle(UnityEngine.Random.Range(6, 9), 0.5f, onComplete));
+        StartCoroutine(PlayRoundSequence(onComplete));
     }
 
-
-
-    private IEnumerator StartGameSequence(Action onComplete)
+    private IEnumerator StartSequence(Action onComplete)
     {
         // Lift cups
         yield return MoveCups(Vector3.up * liftHeight);
@@ -52,6 +50,13 @@ public class CupGame : MonoBehaviour
         // Lower cups
         yield return MoveCups(Vector3.down * liftHeight);
         yield return ParentMushroomToCup(true);
+
+        onComplete?.Invoke();
+    }
+    private IEnumerator PlayRoundSequence(Action onComplete)
+    {
+        // Lift cups
+        yield return SwapCupsInCircle(UnityEngine.Random.Range(6, 9), 0.5f);
 
         onComplete?.Invoke();
     }
@@ -113,7 +118,7 @@ public class CupGame : MonoBehaviour
         yield return null;
     }    
 
-    private IEnumerator SwapCupsInCircle(int swaps, float swapDuration, Action onComplete)
+    private IEnumerator SwapCupsInCircle(int swaps, float swapDuration)
     {
         int lastFirstCupIndex = -1; 
         int lastSecondCupIndex = -1;
@@ -160,8 +165,6 @@ public class CupGame : MonoBehaviour
 
                 yield return null;
             }
-
-            onComplete?.Invoke();
         }
     }
 

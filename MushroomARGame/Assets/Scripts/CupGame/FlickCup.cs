@@ -22,9 +22,7 @@ public class FlickCup : MonoBehaviour
     }
 
     void Awake()
-    {
-        originalPosition = transform.position;
-        originalRotation = transform.rotation;
+    {        
         rb = GetComponent<Rigidbody>();      
     }
 
@@ -41,6 +39,8 @@ public class FlickCup : MonoBehaviour
     public void ActivateCup()
     {
         currentActiveCup = this;
+        originalPosition = transform.position;
+        originalRotation = transform.rotation;
         FlickCupAction();
     }
 
