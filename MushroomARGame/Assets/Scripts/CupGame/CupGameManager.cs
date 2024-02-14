@@ -17,13 +17,14 @@ public class CupGameManager : MonoBehaviour
 
     public Action onGameStart;
     public Action<int, float> onPlayRound;
+    public Action onPicking;
     public Action onGameEnd;
 
     private CupGame cupGame;
 
     private void Awake()
     {
-        DebugUtility.TryGetComponentWithErrorLog<CupGame>(gameObject, out cupGame);               
+        cupGame = DebugUtility.GetComponentFromGameObject<CupGame>(gameObject);               
     }
 
     private void Start()

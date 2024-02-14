@@ -20,14 +20,11 @@ public class FlickCup : MonoBehaviour
         private set { currentActiveCup = value; }
     }
 
-    private PlayerInput playerInput = null;
-
     void Awake()
     {
         originalPosition = transform.position;
         originalRotation = transform.rotation;
-        rb = GetComponent<Rigidbody>();
-        playerInput = FindObjectOfType<PlayerInput>();        
+        rb = GetComponent<Rigidbody>();      
     }
 
     private void OnEnable()
