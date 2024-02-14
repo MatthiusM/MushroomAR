@@ -6,6 +6,7 @@ public class CupGameManager : MonoBehaviour
 {
     public event Action<Action> OnStart;
     public event Action<Action> OnPlayRound;
+    public event Action OnPicking;
 
     private void Start()
     {
@@ -16,6 +17,7 @@ public class CupGameManager : MonoBehaviour
     {
         yield return WaitForEvent(OnStart);
         yield return WaitForEvent(OnPlayRound);
+        OnPicking?.Invoke();
     }
 
     private IEnumerator WaitForEvent(Action<Action> gameEvent)
