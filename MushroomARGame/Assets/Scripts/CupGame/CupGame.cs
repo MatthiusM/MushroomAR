@@ -24,13 +24,13 @@ public class CupGame : MonoBehaviour
 
     private void OnEnable()
     {
-        cupGameManager.OnStart += StartGame;
-        cupGameManager.OnPlayRound += PlayRound;
+        cupGameManager.OnStartWithCallback += StartGame;
+        cupGameManager.OnPlayRoundWithCallback += PlayRound;
     }
 
     private void OnDisable()
     {
-        cupGameManager.OnStart -= StartGame;
+        cupGameManager.OnStartWithCallback -= StartGame;
     }
 
     private void StartGame(Action onComplete)
