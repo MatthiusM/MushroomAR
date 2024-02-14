@@ -1,29 +1,27 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CupGameManager : MonoBehaviour
 {
-    public event Action<Action> onStart;
-    public event Action<Action> onPlayRound;
+    public event Action<Action> OnStart;
+    public event Action<Action> OnPlayRound;
 
-    void Start()
+    private void Start()
     {
-        // Example trigger
-        StartCoroutine(WaitForEventToComplete());
+        StartCoroutine(ExecuteGameFlow());
     }
 
-    public IEnumerator WaitForEventToComplete()
+    private IEnumerator ExecuteGameFlow()
     {
-        bool startIsComplete = false;
+        yield return WaitForEvent(OnStart);
+        yield return WaitForEvent(OnPlayRound);
+    }
 
-        onStart?.Invoke(() => { startIsComplete = true; });
-        yield return new WaitUntil(() => startIsComplete);
-
-        bool startPlayRound = false;
-
-        onPlayRound?.Invoke(() => { startPlayRound = true; });
-        yield return new WaitUntil(() => startPlayRound);
+    private IEnumerator WaitForEvent(Action<Action> gameEvent)
+    {
+        bool isComplete = false;
+        gameEvent?.Invoke(() => { isComplete = true; });
+        yield return new WaitUntil(() => isComplete);
     }
 }
