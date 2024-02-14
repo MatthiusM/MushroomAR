@@ -11,6 +11,7 @@ public class FlickCup : MonoBehaviour
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private Rigidbody rb;
+
     public System.Action onFlickAction;
 
     private static FlickCup currentActiveCup = null;

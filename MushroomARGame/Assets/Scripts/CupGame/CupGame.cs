@@ -17,8 +17,6 @@ public class CupGame : MonoBehaviour
 
     private CupGameManager cupGameManager;
 
-    public Action onStartFinished;
-
     private void Awake()
     {
         cupGameManager = DebugUtility.GetComponentFromGameObject<CupGameManager>(gameObject);
@@ -26,27 +24,27 @@ public class CupGame : MonoBehaviour
 
     private void OnEnable()
     {
-        cupGameManager.onGameStart += StartGame;
+        cupGameManager.onStart += StartGame;
         cupGameManager.onPlayRound += PlayRound;
     }
 
     private void OnDisable()
     {
-        cupGameManager.onGameStart -= StartGame;
-        cupGameManager.onPlayRound -= PlayRound;
+        cupGameManager.onStart -= StartGame;
     }
 
-    private void StartGame()
+    private void StartGame(Action onComplete)
     {
-        StartCoroutine(StartGameSequence());
+        StartCoroutine(StartGameSequence(onComplete));
     }
-
-    private void PlayRound(int swaps, float totalDuration)
+    private void PlayRound(Action onComplete)
     {
-        StartCoroutine(SwapCupsInCircle(swaps, totalDuration));
+        StartCoroutine(SwapCupsInCircle(UnityEngine.Random.Range(6, 9), 0.5f, onComplete));
     }
 
-    private IEnumerator StartGameSequence()
+
+
+    private IEnumerator StartGameSequence(Action onComplete)
     {
         // Lift cups
         yield return MoveCups(Vector3.up * liftHeight);
@@ -55,7 +53,7 @@ public class CupGame : MonoBehaviour
         yield return MoveCups(Vector3.down * liftHeight);
         yield return ParentMushroomToCup(true);
 
-        onStartFinished?.Invoke();
+        onComplete?.Invoke();
     }
 
     private IEnumerator MoveCups(Vector3 moveDirection)
@@ -115,7 +113,7 @@ public class CupGame : MonoBehaviour
         yield return null;
     }    
 
-    private IEnumerator SwapCupsInCircle(int swaps, float swapDuration)
+    private IEnumerator SwapCupsInCircle(int swaps, float swapDuration, Action onComplete)
     {
         int lastFirstCupIndex = -1; 
         int lastSecondCupIndex = -1;
@@ -163,8 +161,7 @@ public class CupGame : MonoBehaviour
                 yield return null;
             }
 
-            firstCup.transform.position = startSecondCupPos;
-            secondCup.transform.position = startFirstCupPos;
+            onComplete?.Invoke();
         }
     }
 

@@ -5,51 +5,25 @@ using UnityEngine;
 
 public class CupGameManager : MonoBehaviour
 {
-    public enum GameState
+    public event Action<Action> onStart;
+    public event Action<Action> onPlayRound;
+
+    void Start()
     {
-        Starting,
-        Playing,
-        Picking,
-        Ending
+        // Example trigger
+        StartCoroutine(WaitForEventToComplete());
     }
 
-    public GameState CurrentState { get; private set; } = GameState.Starting;
-
-    public Action onGameStart;
-    public Action<int, float> onPlayRound;
-    public Action onPicking;
-    public Action onGameEnd;
-
-    private CupGame cupGame;
-
-    private void Awake()
+    public IEnumerator WaitForEventToComplete()
     {
-        cupGame = DebugUtility.GetComponentFromGameObject<CupGame>(gameObject);               
-    }
+        bool startIsComplete = false;
 
-    private void Start()
-    {
-        onGameStart?.Invoke();
-    }
+        onStart?.Invoke(() => { startIsComplete = true; });
+        yield return new WaitUntil(() => startIsComplete);
 
-    private void OnEnable()
-    {
-        cupGame.onStartFinished += StartFinished;
-    }
-    
-    private void OnDisable()
-    {
-        cupGame.onStartFinished -= StartFinished;
-    }
+        bool startPlayRound = false;
 
-    private void StartFinished()
-    {
-        StartCoroutine(Waitswconds(1f));
-        onPlayRound?.Invoke(UnityEngine.Random.Range(6, 9), 0.5f);
-    }
-
-    IEnumerator Waitswconds(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
+        onPlayRound?.Invoke(() => { startPlayRound = true; });
+        yield return new WaitUntil(() => startPlayRound);
     }
 }
