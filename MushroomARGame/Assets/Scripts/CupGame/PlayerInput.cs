@@ -25,11 +25,8 @@ public class PlayerInput : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
             {
-                FlickCup flickCup = hit.transform.GetComponent<FlickCup>();
-                if (flickCup != null && (FlickCup.CurrentActiveCup == null))
-                {
-                    flickCup.onFlickAction?.Invoke();
-                }
+                IFlickable flickableCup = hit.transform.GetComponent<IFlickable>();
+                flickableCup?.Flick();
             }
         }
     }

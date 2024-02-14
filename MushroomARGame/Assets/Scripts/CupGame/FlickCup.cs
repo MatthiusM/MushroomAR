@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlickCup : MonoBehaviour
+public class FlickCup : MonoBehaviour, IFlickable
 {
     private readonly float flickForce = 3f;
     private readonly float torqueForce = 0.5f;
@@ -11,8 +11,6 @@ public class FlickCup : MonoBehaviour
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private Rigidbody rb;
-
-    public System.Action onFlickAction;
 
     private static FlickCup currentActiveCup = null;
     public static FlickCup CurrentActiveCup
@@ -24,16 +22,6 @@ public class FlickCup : MonoBehaviour
     void Awake()
     {        
         rb = GetComponent<Rigidbody>();      
-    }
-
-    private void OnEnable()
-    {
-        onFlickAction += ActivateCup;
-    }
-
-    private void OnDisable()
-    {
-        onFlickAction -= ActivateCup;
     }
 
     public void ActivateCup()
@@ -66,5 +54,14 @@ public class FlickCup : MonoBehaviour
         transform.rotation = originalRotation;
 
         currentActiveCup = null;
+    }
+
+    public void Flick()
+    {
+        if (CurrentActiveCup != null)
+        {
+            return;
+        }
+        ActivateCup();
     }
 }
