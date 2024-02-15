@@ -26,11 +26,19 @@ public class CupGame : MonoBehaviour
     {
         cupGameManager.OnStartWithCallback += StartGame;
         cupGameManager.OnPlayRoundWithCallback += PlayRound;
+        cupGameManager.OnPicking += RemoveMushroomParent;
     }
 
     private void OnDisable()
     {
         cupGameManager.OnStartWithCallback -= StartGame;
+        cupGameManager.OnPlayRoundWithCallback -= PlayRound;
+        cupGameManager.OnPicking -= RemoveMushroomParent;
+    }
+
+    private void RemoveMushroomParent()
+    {
+        StartCoroutine(ParentMushroomToCup(false));
     }
 
     private void StartGame(Action onComplete)
@@ -115,7 +123,7 @@ public class CupGame : MonoBehaviour
     private IEnumerator ParentMushroomToCup(bool shouldParent)
     {
         mushroom.transform.SetParent(shouldParent ? targetCup.transform : null);
-        targetCup.GetComponent<IMushroomParent>().SetAsMushroomParent(shouldParent);
+        targetCup.GetComponent<IMushroomParent>().SetAsMushroomParent(true);
         yield return null;
     }    
 
