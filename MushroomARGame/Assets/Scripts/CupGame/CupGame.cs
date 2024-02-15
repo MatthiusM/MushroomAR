@@ -115,6 +115,7 @@ public class CupGame : MonoBehaviour
     private IEnumerator ParentMushroomToCup(bool shouldParent)
     {
         mushroom.transform.SetParent(shouldParent ? targetCup.transform : null);
+        targetCup.GetComponent<IMushroomParent>().SetAsMushroomParent(shouldParent);
         yield return null;
     }    
 
