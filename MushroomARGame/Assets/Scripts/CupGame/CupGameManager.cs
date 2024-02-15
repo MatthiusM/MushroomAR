@@ -16,6 +16,8 @@ public class CupGameManager : MonoBehaviour
 
     private PlayerInput playerInput;
 
+    public GameObject I;
+
     private void Start()
     {
         playerInput = DebugUtility.GetComponentFromName<PlayerInput>("PlayerInput");
@@ -28,6 +30,8 @@ public class CupGameManager : MonoBehaviour
         yield return StartCoroutine(WaitForEvent(OnPlayRound, OnPlayRoundWithCallback));
         yield return StartCoroutine(WaitForEvent(OnPicking, OnPickingWithCallback));
         yield return new WaitUntil(() => playerInput.FinishedFlick);
+
+        I.SetActive(true);
 
         // wait for event here?
     }
