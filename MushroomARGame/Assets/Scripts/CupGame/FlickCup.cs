@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlickCup : MonoBehaviour, IFlickable
+public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
 {
     private readonly float flickForce = 3f;
     private readonly float torqueForce = 0.5f;
@@ -11,6 +11,7 @@ public class FlickCup : MonoBehaviour, IFlickable
     private Vector3 originalPosition;
     private Quaternion originalRotation;
     private Rigidbody rb;
+    private bool mushroomParent = false;
 
     private static FlickCup currentActiveCup = null;
     public static FlickCup CurrentActiveCup
@@ -63,5 +64,10 @@ public class FlickCup : MonoBehaviour, IFlickable
             return;
         }
         ActivateCup();
+    }
+
+    public void SetAsMushroomParent(bool b)
+    {
+        mushroomParent = b;
     }
 }
