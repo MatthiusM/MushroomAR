@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CupGameManager : MonoBehaviour
 {
@@ -13,9 +14,11 @@ public class CupGameManager : MonoBehaviour
     public event Action<Action> OnPickingWithCallback;
     public event Action OnPicking;
 
+    private PlayerInput playerInput;
 
     private void Start()
     {
+        playerInput = DebugUtility.GetComponentFromName<PlayerInput>("PlayerInput");
         StartCoroutine(GameFlow());
     }
 
@@ -24,6 +27,9 @@ public class CupGameManager : MonoBehaviour
         yield return StartCoroutine(WaitForEvent(OnStart, OnStartWithCallback));
         yield return StartCoroutine(WaitForEvent(OnPlayRound, OnPlayRoundWithCallback));
         yield return StartCoroutine(WaitForEvent(OnPicking, OnPickingWithCallback));
+        yield return new WaitUntil(() => playerInput.FinishedFlick);
+
+        // wait for event here?
     }
     private IEnumerator WaitForEvent(Action simpleEvent, Action<Action> actionEvent)
     {
