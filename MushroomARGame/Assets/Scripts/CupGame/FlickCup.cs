@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,30 +21,35 @@ public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
         private set { currentActiveCup = value; }
     }
 
+    private CupGameManager cupGameManager;
+
     void Awake()
-    {        
-        rb = GetComponent<Rigidbody>();      
+    {
+        rb = GetComponent<Rigidbody>();
+        cupGameManager = DebugUtility.GetComponentFromName<CupGameManager>("CupGame");
     }
 
-    public void ActivateCup()
+    public void ActivateCup(Action onComplete)
     {
+        if (currentActiveCup != null) return;
+
         currentActiveCup = this;
         originalPosition = transform.position;
         originalRotation = transform.rotation;
-        FlickCupAction();
+        FlickCupAction(onComplete);
     }
 
-    void FlickCupAction()
+    void FlickCupAction(Action onComplete)
     {
         rb.isKinematic = false;
         rb.AddForce(flickDirection.normalized * flickForce, ForceMode.Impulse);
         rb.AddTorque(torqueDirection * torqueForce, ForceMode.Impulse);
         rb.useGravity = true;
 
-        StartCoroutine(RespawnCup());
+        StartCoroutine(RespawnCup(onComplete));
     }
 
-    IEnumerator RespawnCup()
+    IEnumerator RespawnCup(Action onComplete)
     {
         yield return new WaitForSeconds(1);
 
@@ -55,15 +61,13 @@ public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
         transform.rotation = originalRotation;
 
         currentActiveCup = null;
+
+        onComplete?.Invoke();
     }
 
-    public void Flick()
+    public void Flick(Action onComplete)
     {
-        if (CurrentActiveCup != null)
-        {
-            return;
-        }
-        ActivateCup();
+        ActivateCup(onComplete);
     }
 
     public void SetAsMushroomParent(bool b)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
@@ -9,7 +10,16 @@ public class PlayerInput : MonoBehaviour
 
     private bool IsFlickable = false;
 
+    private bool finishedFlick = false;
+    public bool FinishedFlick
+    {
+        get { return finishedFlick; }
+        private set { finishedFlick = value; }
+    }
+
     private CupGameManager cupGameManager;
+
+    public Action OnFinishedFlick;
 
     void Awake()
     {
@@ -26,16 +36,25 @@ public class PlayerInput : MonoBehaviour
     private void OnEnable()
     {
         cupGameManager.OnPicking += EnableFlick;
+        OnFinishedFlick += DisableClick;
     }
 
     private void OnDisable()
     {
         cupGameManager.OnPicking -= EnableFlick;
+        OnFinishedFlick -= DisableClick;
+    }
+
+    private void DisableClick()
+    {
+        IsFlickable = false;
+        finishedFlick = true;
     }
 
     private void EnableFlick()
     {
         IsFlickable = true;
+        finishedFlick = false;
     }
 
     void Update()
@@ -48,7 +67,7 @@ public class PlayerInput : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
             {
                 IFlickable flickableCup = hit.transform.GetComponent<IFlickable>();
-                flickableCup?.Flick();
+                flickableCup?.Flick(OnFinishedFlick);
             }
         }
     }
