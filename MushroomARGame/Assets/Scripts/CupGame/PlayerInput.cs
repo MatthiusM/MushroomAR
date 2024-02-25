@@ -45,6 +45,25 @@ public class PlayerInput : MonoBehaviour
         OnFinishedFlick -= DisableClick;
     }
 
+    void Update()
+    {
+        // Handle mouse input
+        if (Input.GetMouseButtonDown(0) && IsFlickable)
+        {
+            ProcessInput(Input.mousePosition);
+        }
+
+        // Handle touch input
+        if (Input.touchCount > 0 && IsFlickable)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began) 
+            {
+                ProcessInput(touch.position);
+            }
+        }
+    }
+
     private void DisableClick()
     {
         IsFlickable = false;
@@ -57,18 +76,16 @@ public class PlayerInput : MonoBehaviour
         finishedFlick = false;
     }
 
-    void Update()
+    private void ProcessInput(Vector2 inputPosition)
     {
-        if (Input.GetMouseButtonDown(0) && IsFlickable)
-        {
-            Ray ray = arCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+        Ray ray = arCamera.ScreenPointToRay(inputPosition);
+        RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
-            {
-                IFlickable flickableCup = hit.transform.GetComponent<IFlickable>();
-                flickableCup?.Flick(OnFinishedFlick);
-            }
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+        {
+            IFlickable flickableCup = hit.transform.GetComponent<IFlickable>();
+            flickableCup?.Flick(OnFinishedFlick);
         }
     }
+
 }

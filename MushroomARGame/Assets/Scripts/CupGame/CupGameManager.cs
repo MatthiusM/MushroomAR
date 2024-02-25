@@ -3,7 +3,15 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CupGameManager : MonoBehaviour
+public enum CupGameStates
+{
+    Start,
+    PlayRound,
+    Picking,
+    End,
+}
+
+public class CupGameManager : GameManager<CupGameStates>
 {
     public event Action<Action> OnStartWithCallback;
     public event Action OnStart;
@@ -21,6 +29,7 @@ public class CupGameManager : MonoBehaviour
     private void Start()
     {
         playerInput = DebugUtility.GetComponentFromName<PlayerInput>("PlayerInput");
+        I = GameObject.Find("Image2");
         StartCoroutine(GameFlow());
     }
 
