@@ -57,6 +57,8 @@ public class CupGame : MonoBehaviour
     }
     private IEnumerator PlayRoundSequence()
     {
+        yield return ParentMushroomToCup(true);
+
         yield return SwapCupsInCircle(UnityEngine.Random.Range(6, 9), 0.5f);
 
         CupGameManager.Instance.SwitchState(CupGameStates.Picking);

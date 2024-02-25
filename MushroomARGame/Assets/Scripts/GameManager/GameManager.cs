@@ -5,7 +5,24 @@ using UnityEngine;
 public abstract class GameManager<T> : MonoBehaviour where T : Enum
 {
     private static GameManager<T> instance;
-    public static GameManager<T> Instance => instance;
+    public static GameManager<T> Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<GameManager<T>>();
+
+                if (instance == null)
+                {
+                    GameObject gameManagerObject = new(typeof(T).Name + "Manager");
+                    instance = gameManagerObject.AddComponent(typeof(GameManager<T>)) as GameManager<T>;
+                }
+            }
+
+            return instance;
+        }
+    }
 
     private T currentState;
     public T CurrentState => currentState;

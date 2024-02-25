@@ -11,11 +11,7 @@ public class PlayerInput : MonoBehaviour
     private bool IsFlickable = false;
 
     private bool finishedFlick = false;
-    public bool FinishedFlick
-    {
-        get { return finishedFlick; }
-        private set { finishedFlick = value; }
-    }
+    public bool FinishedFlick => finishedFlick;
 
     public Action OnFinishedFlick;
 
