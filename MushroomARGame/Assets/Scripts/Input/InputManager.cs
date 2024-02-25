@@ -1,16 +1,30 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour, Controls.ITouchControlsActions
 {
     private static InputManager instance;
-    public static InputManager Instance { get { return instance; } }
+    public static InputManager Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = FindObjectOfType<InputManager>();
+
+                if (instance == null)
+                {
+                    GameObject inputManagerObject = new("InputManager");
+                    instance = inputManagerObject.AddComponent<InputManager>();
+                }
+            }
+
+            return instance;
+        }
+    }
 
     public Action<Vector2> OnTapEvent;
-
     private Controls controls;
 
     private void Awake()
@@ -40,8 +54,10 @@ public class InputManager : MonoBehaviour, Controls.ITouchControlsActions
 
     public void OnTap(InputAction.CallbackContext context)
     {
-        Debug.Log("tap");
-        Vector2 tapPosition = context.ReadValue<Vector2>();
-        OnTapEvent?.Invoke(tapPosition);
+        if (context.performed)
+        {
+            Vector2 tapPosition = context.ReadValue<Vector2>();
+            OnTapEvent?.Invoke(tapPosition);
+        }
     }
 }

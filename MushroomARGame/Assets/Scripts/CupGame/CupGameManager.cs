@@ -15,6 +15,6 @@ public class CupGameManager : GameManager<CupGameStates>
 {
     private void Start()
     {
-        Instance.SwitchState(CupGameStates.Picking);
+        Instance.SwitchState(CupGameStates.Start);
     }
 }
