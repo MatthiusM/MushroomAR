@@ -5,17 +5,10 @@ using UnityEngine;
 public abstract class GameManager<T> : MonoBehaviour where T : Enum
 {
     private static GameManager<T> instance;
-    public static GameManager<T> Instance
-    {
-        get { return instance; }
-    }
+    public static GameManager<T> Instance => instance;
 
     private T currentState;
-    public T CurrentState
-    {
-        get { return currentState; }
-        private set { currentState = value; }
-    }
+    public T CurrentState => currentState;
 
     protected Dictionary<T, Action> onEnterState = new();
     protected Dictionary<T, Action> onExitState = new();
@@ -51,13 +44,22 @@ public abstract class GameManager<T> : MonoBehaviour where T : Enum
         onEnterState[newState]?.Invoke();
     }
 
-    public Action GetOnEnterAction(T state)
+    private void UpdateStateAction(Dictionary<T, Action> dictionary, T state, Action callback, bool add)
     {
-        return onEnterState[state];
+        if (add)
+        {
+            dictionary[state] += callback;
+        }
+        else
+        {
+            dictionary[state] -= callback;
+        }
     }
 
-    public Action GetOnExitAction(T state)
-    {
-        return onExitState[state];
-    }
+    public void AddOnEnter(T state, Action callback) => UpdateStateAction(onEnterState, state, callback, add: true);
+    public void RemoveOnEnter(T state, Action callback) => UpdateStateAction(onEnterState, state, callback, add: false);
+
+    public void AddOnExit(T state, Action callback) => UpdateStateAction(onExitState, state, callback, add: true);
+    public void RemoveOnExit(T state, Action callback) => UpdateStateAction(onExitState, state, callback, add: false);
+
 }
