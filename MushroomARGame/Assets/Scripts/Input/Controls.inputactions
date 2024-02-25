@@ -2,41 +2,85 @@
     "name": "Controls",
     "maps": [
         {
-            "name": "Player",
+            "name": "TouchControls",
             "id": "759307d9-c561-4c89-b8b3-f4a147367f5f",
             "actions": [
                 {
                     "name": "Tap",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "0e74dce8-a0c2-4e57-b28a-4d9691cc35bf",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
-                    "name": "",
-                    "id": "acd863cf-12fb-4974-ae97-63c8e50918c8",
-                    "path": "<Touchscreen>/Press",
+                    "name": "Mouse",
+                    "id": "47ff9ed4-a590-4ce5-86a1-3375824e70ea",
+                    "path": "OneModifier",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Touch",
+                    "groups": "",
                     "action": "Tap",
-                    "isComposite": false,
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "3b1b3138-012b-4fb2-98bb-a84be483cdf3",
+                    "name": "Modifier",
+                    "id": "0b9f6b9f-4715-4ba8-b850-a286b2543c8d",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard & Mouse",
                     "action": "Tap",
                     "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Binding",
+                    "id": "79b81d70-fed7-4a41-9c78-70a48197f90c",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard & Mouse",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Touch",
+                    "id": "87e9becb-0d23-402c-9a2f-fa96771fc805",
+                    "path": "OneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Tap",
+                    "isComposite": true,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "modifier",
+                    "id": "2071a09f-c625-498a-8b53-8450c2a52402",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touch",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "binding",
+                    "id": "9ecf9f18-70bc-4012-a68c-4c9c97d81175",
+                    "path": "<Touchscreen>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touch",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

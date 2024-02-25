@@ -17,8 +17,6 @@ public class PlayerInput : MonoBehaviour
         private set { finishedFlick = value; }
     }
 
-    private CupGameManager cupGameManager;
-
     public Action OnFinishedFlick;
 
     void Awake()
@@ -29,38 +27,26 @@ public class PlayerInput : MonoBehaviour
         {
             arCamera = arSessionOrigin.GetComponentInChildren<Camera>();
         }
-
-        cupGameManager = DebugUtility.GetComponentFromName<CupGameManager>("CupGame");
     }
 
     private void OnEnable()
     {
-        cupGameManager.OnPicking += EnableFlick;
+        CupGameManager.Instance.AddOnEnter(CupGameStates.Picking, EnableFlick);
         OnFinishedFlick += DisableClick;
+        InputManager.Instance.OnTapEvent += HandleTap;
     }
 
     private void OnDisable()
     {
-        cupGameManager.OnPicking -= EnableFlick;
+        CupGameManager.Instance.AddOnExit(CupGameStates.Picking, EnableFlick);
         OnFinishedFlick -= DisableClick;
+        InputManager.Instance.OnTapEvent -= HandleTap;
     }
-
-    void Update()
+    private void HandleTap(Vector2 position)
     {
-        // Handle mouse input
-        if (Input.GetMouseButtonDown(0) && IsFlickable)
+        if (IsFlickable)
         {
-            ProcessInput(Input.mousePosition);
-        }
-
-        // Handle touch input
-        if (Input.touchCount > 0 && IsFlickable)
-        {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began) 
-            {
-                ProcessInput(touch.position);
-            }
+            ProcessInput(position);
         }
     }
 

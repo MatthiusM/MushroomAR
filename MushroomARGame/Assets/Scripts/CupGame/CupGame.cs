@@ -15,25 +15,19 @@ public class CupGame : MonoBehaviour
     private readonly float moveMushroomDuration = 2.0f;
     private GameObject targetCup;
 
-    private CupGameManager cupGameManager;
-
-    private void Awake()
-    {
-        cupGameManager = DebugUtility.GetComponentFromGameObject<CupGameManager>(gameObject);
-    }
 
     private void OnEnable()
     {
-        cupGameManager.OnStartWithCallback += StartGame;
-        cupGameManager.OnPlayRoundWithCallback += PlayRound;
-        cupGameManager.OnPicking += RemoveMushroomParent;
+        CupGameManager.Instance.AddOnEnter(CupGameStates.Start, StartGame);
+        CupGameManager.Instance.AddOnEnter(CupGameStates.PlayRound, PlayRound);
+        CupGameManager.Instance.AddOnEnter(CupGameStates.Picking, RemoveMushroomParent);
     }
 
     private void OnDisable()
     {
-        cupGameManager.OnStartWithCallback -= StartGame;
-        cupGameManager.OnPlayRoundWithCallback -= PlayRound;
-        cupGameManager.OnPicking -= RemoveMushroomParent;
+        CupGameManager.Instance.AddOnExit(CupGameStates.Start, StartGame);
+        CupGameManager.Instance.AddOnExit(CupGameStates.PlayRound, PlayRound);
+        CupGameManager.Instance.AddOnExit(CupGameStates.Picking, RemoveMushroomParent);
     }
 
     private void RemoveMushroomParent()
@@ -41,16 +35,16 @@ public class CupGame : MonoBehaviour
         StartCoroutine(ParentMushroomToCup(false));
     }
 
-    private void StartGame(Action onComplete)
+    private void StartGame()
     {
-        StartCoroutine(StartSequence(onComplete));
+        StartCoroutine(StartSequence());
     }
-    private void PlayRound(Action onComplete)
+    private void PlayRound()
     {
-        StartCoroutine(PlayRoundSequence(onComplete));
+        StartCoroutine(PlayRoundSequence());
     }
 
-    private IEnumerator StartSequence(Action onComplete)
+    private IEnumerator StartSequence()
     {
         // Lift cups
         yield return MoveCups(Vector3.up * liftHeight);
@@ -59,14 +53,13 @@ public class CupGame : MonoBehaviour
         yield return MoveCups(Vector3.down * liftHeight);
         yield return ParentMushroomToCup(true);
 
-        onComplete?.Invoke();
+        CupGameManager.Instance.SwitchState(CupGameStates.PlayRound);
     }
-    private IEnumerator PlayRoundSequence(Action onComplete)
+    private IEnumerator PlayRoundSequence()
     {
-        // Lift cups
         yield return SwapCupsInCircle(UnityEngine.Random.Range(6, 9), 0.5f);
 
-        onComplete?.Invoke();
+        CupGameManager.Instance.SwitchState(CupGameStates.Picking);
     }
 
     private IEnumerator MoveCups(Vector3 moveDirection)

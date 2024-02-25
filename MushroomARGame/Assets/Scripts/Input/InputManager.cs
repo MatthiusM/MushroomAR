@@ -1,15 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour, Controls.IPlayerActions
+public class InputManager : MonoBehaviour, Controls.ITouchControlsActions
 {
     private static InputManager instance;
     public static InputManager Instance { get { return instance; } }
 
-    public delegate void TapAction(Vector2 position);
-    public event TapAction OnTapEvent;
+    public Action<Vector2> OnTapEvent;
 
     private Controls controls;
 
@@ -25,25 +25,23 @@ public class InputManager : MonoBehaviour, Controls.IPlayerActions
         }
 
         controls = new Controls();
-        controls.Player.SetCallbacks(this);
+        controls.TouchControls.SetCallbacks(this);
     }
 
     private void OnEnable()
     {
-        controls.Player.Enable();
+        controls.TouchControls.Enable();
     }
 
     private void OnDisable()
     {
-        controls.Player.Disable();
+        controls.TouchControls.Disable();
     }
 
     public void OnTap(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Performed)
-        {
-            Vector2 tapPosition = context.ReadValue<Vector2>();
-            OnTapEvent?.Invoke(tapPosition);
-        }
+        Debug.Log("tap");
+        Vector2 tapPosition = context.ReadValue<Vector2>();
+        OnTapEvent?.Invoke(tapPosition);
     }
 }
