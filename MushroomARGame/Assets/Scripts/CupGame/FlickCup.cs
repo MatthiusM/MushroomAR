@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
 {
@@ -61,6 +62,7 @@ public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
         if (mushroomParent)
         {
             CupGameManager.Instance.SwitchState(CupGameStates.End);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
         else
         {
