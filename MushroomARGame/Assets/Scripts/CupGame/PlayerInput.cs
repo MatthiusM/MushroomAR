@@ -28,15 +28,15 @@ public class PlayerInput : MonoBehaviour
     private void OnEnable()
     {
         CupGameManager.Instance.AddOnEnter(CupGameStates.Picking, EnableFlick);
-        OnFinishedFlick += DisableClick;
         InputManager.Instance.OnTapEvent += HandleTap;
+        OnFinishedFlick += DisableClick;
     }
 
     private void OnDisable()
     {
         CupGameManager.Instance.AddOnExit(CupGameStates.Picking, EnableFlick);
-        OnFinishedFlick -= DisableClick;
         InputManager.Instance.OnTapEvent -= HandleTap;
+        OnFinishedFlick -= DisableClick;
     }
     private void HandleTap(Vector2 position)
     {
