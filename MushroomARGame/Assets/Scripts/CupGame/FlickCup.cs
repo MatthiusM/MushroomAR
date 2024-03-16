@@ -62,7 +62,6 @@ public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
         if (mushroomParent)
         {
             CupGameManager.Instance.SwitchState(CupGameStates.End);
-            SceneManager.LoadScene("MainMenu");
         }
         else
         {
