@@ -14,8 +14,8 @@ public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
     private Quaternion originalRotation;
     private Rigidbody rb;
     private bool mushroomParent = false;
-    private Camera arCamera;
-    private LayerMask layerMask;
+    ShowUI show;
+    
 
     private static FlickCup currentActiveCup = null;
     public static FlickCup CurrentActiveCup => currentActiveCup;
@@ -23,6 +23,7 @@ public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        show = FindObjectOfType<ShowUI>();
     }
 
     public void ActivateCup(Action onComplete)
@@ -61,6 +62,7 @@ public class FlickCup : MonoBehaviour, IFlickable, IMushroomParent
 
         if (mushroomParent)
         {
+            show.DisplayUI();
             CupGameManager.Instance.SwitchState(CupGameStates.End);
         }
         else
