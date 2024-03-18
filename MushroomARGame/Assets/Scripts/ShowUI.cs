@@ -7,12 +7,7 @@ public class ShowUI : MonoBehaviour
 {
     [SerializeField] private GameObject infoTextMenu;
 
-    private void OnEnable()
-    {
-        CupGameManager.Instance.AddOnEnter(CupGameStates.End, DisplayUI);
-    }
-
-    private void DisplayUI()
+    public void DisplayUI()
     {
         infoTextMenu.SetActive(true);
     }
