@@ -6,11 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: f20a72dbe0c87504e9fe1bd1118dfe07
-  - enabled: 1
-    path: Assets/Scenes/BlankAR.unity
-    guid: 6bdce89659816455b9f906fc62d19910
+    path: Assets/Scenes/Level2.unity
+    guid: 6b8fe6ff99b6a2349886d10296dad109
   m_configObjects:
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 744b813df90924c169af73489b8325de,
       type: 2}
